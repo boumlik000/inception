@@ -1,88 +1,206 @@
-HELLO in this file ,I mboumlik will explain how u can use Inception project.
-1- What services are provided in the stak :
-    * Nginx : web server with TLS(ssl increption)
-        - Configured with TLSv1.3
-        - Act as a reverse Proxy to other services
-        - Serve ur website securely on HTTPS
- 
-    * Wordpress : Content management system 
-        - website and a blog platform
-        - accessible via web browser
-        - connected to Mariadb databse
- 
-    * Mariadb : Database server
-        - stores all Wordpress Data
-        - secure database using user authontification
-        - presistent storage using docker volumes
+# User Documentation - Inception Project
 
-2- How to start and stop the project :
-    a:  To start the project :
-        - first create the paths for the volumes : 
-            * mkdir -p /home/(hostname)/data/worpress
-            * mkdir /home/(hostname)/data/mariadb
-        - to start all service : make
-        - or manualy : docker compose -f ./srcs/docker-compose.yml up -d --build
-        ::The -d flag runs containers in detached mode (background).
+Hello! In this file, I (mboumlik) will explain how you can use the Inception project.
 
-        ** First Launch: The first time you start the project, Docker will:
-            - Build all custom images (this may take a few minutes)
-            - Create volumes for persistent data
-            - Initialize the database
-            - Set up the WordPress installation
+## 1. What Services are Provided in the Stack
 
-    b:  To stop the project :
-        - make stop
-        - or manually :docker-compose -f ./srcs/docker-compose.yml stop
-        :: its highly recomended that if u want to run back ur containers: make start
+### Nginx - Web Server with TLS (SSL Encryption)
+- Configured with TLSv1.3
+- Acts as a reverse proxy to other services
+- Serves your website securely on HTTPS
 
-    c: for complete cleanup:
-        - make fclean
-        ::Warning: This will delete all data including your database and WordPress files!
+### WordPress - Content Management System
+- Website and blog platform
+- Accessible via web browser
+- Connected to MariaDB database
 
-    d: to restart all services:
-        - make re
-        ::This performs a clean restart (stops, cleans, and starts fresh)
+### MariaDB - Database Server
+- Stores all WordPress data
+- Secure database using user authentication
+- Persistent storage using Docker volumes
 
-3- How to Access website and administrator panel :
-    - open ur browser and navigate to https://your-domain.42.fr
-    ::Replace your-domain with your actual domain name (ur login)
-    ::Note: You may see a security warning on first access because the SSL certificate is self-signed. This is normal for development. Click "Advanced" and proceed to the site.
-    - to access the wordpress admin dashboard : https://your-domain.42.fr/wp-admin
-    ::You will be prompted to log in with your WordPress admin password
+## 2. How to Start and Stop the Project
 
-4- Locate and manage credentials :
-    - All credentials are stored in the .env file located in the srcs directory (Emails , Names)
-    - All passwords are stored in the secret folder , to read the password : cat secrets/wp_admin_pass.txt (ex)
-    :: u can change the password by modifying the files in secret , also u can change the email or name from .env file (ex : ADMIN_USER=mboumlik ==> ADMIN_USER=ad_ad_user)
-    
-5-  Check that the services are running correctly :
-    - run : docker ps 
-    :: u shoud see three container : nginx(port 443) , wordpress(port 9000) , mariadb (port 3306)
-    - check individual service status : 
-        ** docker compose ps nginx
-        ** docker compose ps mariadb
-        ** docker compose ps wordpress
-    - to see whats hapening inside a container 
-        ::for all services :
-            ** docker compose logs
-        ::for individuals :
-            ** docker-compose logs nginx
-            ** docker-compose logs wordpress
-            ** docker-compose logs mariadb
-    -  ::follow logs for a real time :
-        docker-compose logs -f 
-    - test your Nginx :
-        curl -k https://localhost
-        ::You should receive HTML content from your WordPress site
-    - test database container :
-        :: to inter maria db container :
-            docker exec -it mariadb bash
-        :: to connect with data base :
-            mysql -u root -p ::Enter your MYSQL_ROOT_PASSWORD when prompted.(from secrets folder)
-    - test with your worpress
-        docker exec -it wordpress ps aux | grep php ::You should see PHP-FPM processes running
-    - verify volumes 
-        :: check volumes exist 
-            docker volume ls ::You should see srcs_mariadb_data srcs_wordpress_data
+### a. To Start the Project
 
-end .
+**First, create the paths for the volumes:**
+```bash
+mkdir -p /home/(hostname)/data/wordpress
+mkdir -p /home/(hostname)/data/mariadb
+```
+
+**To start all services:**
+```bash
+make
+```
+
+**Or manually:**
+```bash
+docker-compose -f ./srcs/docker-compose.yml up -d --build
+```
+
+> The `-d` flag runs containers in detached mode (background).
+
+#### First Launch
+
+The first time you start the project, Docker will:
+- Build all custom images (this may take a few minutes)
+- Create volumes for persistent data
+- Initialize the database
+- Set up the WordPress installation
+
+### b. To Stop the Project
+
+```bash
+make stop
+```
+
+**Or manually:**
+```bash
+docker-compose -f ./srcs/docker-compose.yml stop
+```
+
+> It's highly recommended that if you want to run back your containers, use: `make start`
+
+### c. For Complete Cleanup
+
+```bash
+make fclean
+```
+
+> ⚠️ **Warning:** This will delete all data including your database and WordPress files!
+
+### d. To Restart All Services
+
+```bash
+make re
+```
+
+> This performs a clean restart (stops, cleans, and starts fresh)
+
+## 3. How to Access Website and Administrator Panel
+
+### Access Your Website
+
+Open your browser and navigate to:
+```
+https://your-domain.42.fr
+```
+
+> Replace `your-domain` with your actual domain name (your login)
+
+> **Note:** You may see a security warning on first access because the SSL certificate is self-signed. This is normal for development. Click "Advanced" and proceed to the site.
+
+### Access WordPress Admin Dashboard
+
+Navigate to:
+```
+https://your-domain.42.fr/wp-admin
+```
+
+> You will be prompted to log in with your WordPress admin password
+
+## 4. Locate and Manage Credentials
+
+- All credentials are stored in the `.env` file located in the `srcs` directory (Emails, Names)
+- All passwords are stored in the `secrets` folder
+
+**To read a password:**
+```bash
+cat secrets/wp_admin_pass.txt
+```
+
+**To change credentials:**
+- Change passwords by modifying the files in the `secrets` folder
+- Change emails or names in the `.env` file
+
+Example:
+```env
+ADMIN_USER=mboumlik  # Change to
+ADMIN_USER=ad_ad_user
+```
+
+## 5. Check That Services are Running Correctly
+
+### Check Running Containers
+
+```bash
+docker ps
+```
+
+> You should see three containers:
+> - `nginx` (port 443)
+> - `wordpress` (port 9000)
+> - `mariadb` (port 3306)
+
+### Check Individual Service Status
+
+```bash
+docker-compose ps nginx
+docker-compose ps mariadb
+docker-compose ps wordpress
+```
+
+### View Container Logs
+
+**For all services:**
+```bash
+docker-compose logs
+```
+
+**For individual services:**
+```bash
+docker-compose logs nginx
+docker-compose logs wordpress
+docker-compose logs mariadb
+```
+
+**Follow logs in real-time:**
+```bash
+docker-compose logs -f
+```
+
+### Test Your Nginx
+
+```bash
+curl -k https://localhost
+```
+
+> You should receive HTML content from your WordPress site
+
+### Test Database Container
+
+**Enter MariaDB container:**
+```bash
+docker exec -it mariadb bash
+```
+
+**Connect to database:**
+```bash
+mysql -u root -p
+```
+
+> Enter your `MYSQL_ROOT_PASSWORD` when prompted (from secrets folder)
+
+### Test WordPress
+
+```bash
+docker exec -it wordpress ps aux | grep php
+```
+
+> You should see PHP-FPM processes running
+
+### Verify Volumes
+
+**Check volumes exist:**
+```bash
+docker volume ls
+```
+
+> You should see:
+> - `srcs_mariadb_data`
+> - `srcs_wordpress_data`
+
+---
+
+**End.**
