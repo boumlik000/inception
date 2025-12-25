@@ -14,4 +14,6 @@ RUN chmod +x /usr/local/bin/init_db.sh
 
 EXPOSE 3306
 
+USER mysql
+
 ENTRYPOINT ["/usr/local/bin/init_db.sh"]

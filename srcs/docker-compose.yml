@@ -12,6 +12,12 @@ services:
     secrets:
       - db_root_pass
       - db_user_pass
+    healthcheck:
+      test: ["CMD", "mariadb", "-u", "root", "-p$$(cat /run/secrets/db_root_pass)", "-e", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   wordpress:
     container_name: wordpress
@@ -47,6 +53,7 @@ services:
 
 networks:
     inception:
+      name: inception
       driver: bridge
 
 volumes:

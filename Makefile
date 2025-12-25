@@ -23,7 +23,6 @@ clean: down
 	@docker system prune -a --force
 
 fclean: clean
-	@sudo rm -rf $(DATA_PATH)
 	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 
 re: fclean all
